@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة الأحياء التفاعلية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',Tahoma,sans-serif;min-height:100vh;transition:.3s}
+body.dark{--txt:#fff;--card:rgba(255,255,255,.1);--card2:rgba(255,255,255,.2);background:linear-gradient(-45deg,#1a365d,#2d3748,#1a202c,#2c5282);background-size:400% 400%;animation:bg 15s ease infinite;color:var(--txt)}
+body.light{--txt:#1f2937;--card:rgba(0,0,0,.07);--card2:rgba(0,0,0,.14);background:linear-gradient(-45deg,#e0f2fe,#dbeafe,#e0e7ff,#fae8ff);background-size:400% 400%;animation:bg 15s ease infinite;color:var(--txt)}
+@keyframes bg{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+@keyframes pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.wrap{max-width:760px;margin:0 auto;padding:16px;padding-top:70px}
+.top{position:fixed;top:12px;left:12px;display:flex;gap:8px;z-index:9}
+.round{width:44px;height:44px;border-radius:50%;border:0;font-size:20px;cursor:pointer;background:var(--card2);color:var(--txt)}
+.card{background:var(--card);border-radius:22px;padding:18px;margin-bottom:14px;backdrop-filter:blur(6px)}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:14px;font:700 18px 'Cairo';color:#fff;cursor:pointer;background:linear-gradient(135deg,#3b82f6,#8b5cf6);margin-bottom:10px;transition:.2s}
+.btn:hover{transform:scale(1.02)}
+.btn.sec{background:var(--card2);color:var(--txt)}
+.btn.red{background:rgba(239,68,68,.25);color:#f87171}
+.tile{display:flex;align-items:center;gap:14px;width:100%;border:0;border-radius:20px;padding:18px;color:#fff;font:700 20px 'Cairo';text-align:right;cursor:pointer;margin-bottom:12px;transition:.25s}
+.tile:hover{transform:translateY(-5px);box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.tile small{display:block;font-weight:400;font-size:14px;opacity:.85}
+.tile .ic{font-size:38px}
+.grid{display:grid;gap:12px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:8px}
+.hdr h2{font-size:22px;text-align:center;flex:1}
+.back{border:0;border-radius:12px;padding:8px 14px;background:var(--card2);color:var(--txt);font:600 15px 'Cairo';cursor:pointer}
+input[type=text]{width:100%;padding:14px 18px;border-radius:16px;border:0;font:18px 'Cairo';margin-bottom:12px;background:var(--card2);color:var(--txt);outline:none}
+input::placeholder{color:var(--txt);opacity:.5}
+.opt{display:block;width:100%;text-align:right;padding:14px;margin-bottom:10px;border:0;border-radius:14px;background:var(--card2);color:var(--txt);font:600 17px 'Cairo';cursor:pointer}
+.opt.ok{background:#16a34a;color:#fff}.opt.no{background:#dc2626;color:#fff}
+.bar{height:8px;border-radius:8px;background:var(--card2);overflow:hidden;margin-bottom:18px}.bar i{display:block;height:100%;background:#3b82f6;transition:.4s}
+.center{text-align:center}.big{font-size:80px;animation:pop .5s}
+.pts{font-weight:900;color:#60a5fa}
+.content h3{font-size:24px;margin-bottom:10px}.content h4{font-size:19px;margin:16px 0 8px}.content p,.content li{line-height:1.9;margin-bottom:6px}.content ul{padding-right:22px}
+.rank{display:flex;align-items:center;gap:12px;padding:10px;border-radius:14px;margin-bottom:8px;background:var(--card)}
+.rank b{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--card2)}
+.me{outline:2px solid #3b82f6}
+.timer{width:58px;height:58px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900}
+.timer.low{background:#ef4444;color:#fff;animation:pulse .5s infinite}
+.float{animation:float 6s ease-in-out infinite}
+.logo{width:120px;height:120px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:60px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);box-shadow:0 0 35px rgba(59,130,246,.6)}
+h1.title{font-size:36px;font-weight:900;background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+.ord{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;background:var(--card);margin-bottom:10px}
+.ord span{flex:1}.ord button{border:0;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;background:var(--card2);color:var(--txt)}
+@media(max-width:480px){
+.wrap{padding:10px;padding-top:62px}
+h1.title{font-size:27px}
+.logo{width:96px;height:96px;font-size:48px}
+.tile{padding:14px;font-size:17px;gap:10px;border-radius:16px}.tile .ic{font-size:30px}.tile small{font-size:12px}
+.hdr h2{font-size:18px}.back{padding:7px 10px;font-size:13px}
+.card{padding:14px;border-radius:18px}
+.btn{font-size:16px;padding:12px}
+.opt{font-size:15px;padding:12px}
+.big{font-size:60px}
+.round{width:38px;height:38px;font-size:17px}
+.g2{gap:8px}
+.content h3{font-size:20px}.content h4{font-size:17px}.content p,.content li{font-size:15px}
+.ord{padding:10px;font-size:14px}
+}
+body{min-height:100dvh;-webkit-tap-highlight-color:transparent}
+.chip{display:inline-block;padding:4px 12px;border-radius:99px;margin:3px;font-size:14px;background:var(--card2)}.chip.done{background:rgba(34,197,94,.3);color:#4ade80}
+</style>
+</head>
+<body class="dark">
+<div class="top">
+  <button class="round" id="bTheme" onclick="toggleTheme()">☀️</button>
+  <button class="round" id="bSound" onclick="toggleSound()">🔊</button>
+</div>
+<div id="toast" style="position:fixed;top:64px;left:12px;z-index:10;padding:6px 14px;border-radius:99px;background:rgba(0,0,0,.7);color:#fff;font-size:14px;opacity:0;transition:.3s;pointer-events:none"></div>
+<div id="app"></div>
+
+<script>
+/* ============ البيانات ============ */
+const LESSONS = [
+{id:1,term:1,title:'الوراثة',icon:'🧬',
+ obj:['فهم مبادئ الوراثة الأساسية','التعرف على الجينات والكروموسومات','تطبيق قوانين مندل في الوراثة'],
+ content:`<h3>مقدمة في علم الوراثة</h3><p>الوراثة هي العلم الذي يدرس انتقال الصفات من الآباء إلى الأبناء عبر الأجيال، وتعتمد على وحدات تسمى الجينات وهي أجزاء من الحمض النووي DNA.</p><h4>الكروموسومات والجينات</h4><p>الكروموسومات تراكيب خيطية في نواة الخلية تحمل المادة الوراثية. يحتوي الإنسان على 46 كروموسوماً (23 زوجاً).</p><h4>قوانين مندل</h4><p>وضع جريجور مندل قوانين الوراثة من تجاربه على نبات البازلاء:</p><ul><li>قانون انعزال الصفات</li><li>قانون التوزيع الحر</li><li>قانون السيادة التامة</li></ul>`,
+ mcq:[['ما هي وحدة الوراثة الأساسية؟',['الخلية','الجين','البروتين','الكروموسوم'],1],['كم عدد كروموسومات الإنسان؟',['23','46','44','48'],1],['من هو مؤسس علم الوراثة؟',['داروين','مندل','واطسون','كريك'],1]],
+ tf:[['الجينات موجودة على الكروموسومات',true],['يحتوي الإنسان على 23 كروموسوم فقط',false],['الحمض النووي DNA يحمل المعلومات الوراثية',true]],
+ fill:[['الـ_____ هي وحدة الوراثة الأساسية','جين'],['يحتوي الإنسان على _____ زوجاً من الكروموسومات','23'],['أجرى _____ تجاربه على نبات البازلاء','مندل']],
+ test:[['ما هو الحمض النووي الذي يحمل المعلومات الوراثية؟',['RNA','DNA','ATP','ADP'],1],['أين توجد الكروموسومات في الخلية؟',['السيتوبلازم','النواة','الميتوكوندريا','الغشاء'],1],['ما هي النسبة المظهرية في قانون مندل الأول؟',['1:1','2:1','3:1','4:1'],2],['الصفة المتنحية يرمز لها بحرف:',['كبير','صغير','رقم','رمز'],1],['تجارب مندل أُجريت على نبات:',['القمح','البازلاء','الذرة','الفول'],1]]},
+{id:2,term:1,title:'الخلية',icon:'🔬',
+ obj:['التعرف على مكونات الخلية','فهم وظائف العضيات المختلفة','المقارنة بين الخلية الحيوانية والنباتية'],
+ content:`<h3>الخلية: وحدة بناء الكائن الحي</h3><p>الخلية أصغر وحدة تركيبية ووظيفية في الكائنات الحية، اكتشفها روبرت هوك عام 1665.</p><h4>مكونات الخلية</h4><ul><li><b>النواة:</b> مركز التحكم</li><li><b>الميتوكوندريا:</b> محطة توليد الطاقة</li><li><b>الريبوسومات:</b> مصانع البروتين</li><li><b>الشبكة الإندوبلازمية:</b> نظام النقل الداخلي</li><li><b>جهاز جولجي:</b> التعبئة والتغليف</li></ul><h4>أنواع الخلايا</h4><p>خلايا حقيقية النواة وخلايا بدائية النواة.</p>`,
+ mcq:[['ما العضية المسؤولة عن إنتاج الطاقة؟',['النواة','الميتوكوندريا','الريبوسوم','جولجي'],1],['من اكتشف الخلية؟',['مندل','داروين','روبرت هوك','واطسون'],2],['أين يتم تصنيع البروتينات؟',['النواة','الميتوكوندريا','الريبوسومات','الليسوسومات'],2]],
+ tf:[['النواة هي مركز التحكم في الخلية',true],['الخلية النباتية لا تحتوي على جدار خلوي',false],['الميتوكوندريا تنتج ATP',true]],
+ fill:[['_____ هي محطة توليد الطاقة في الخلية','الميتوكوندريا'],['اكتشف روبرت هوك الخلية عام _____','1665'],['تصنع _____ البروتينات في الخلية','الريبوسومات']],
+ test:[['الغشاء الذي يحيط بالنواة هو:',['الغشاء البلازمي','الغشاء النووي','جدار الخلية','الشبكة الإندوبلازمية'],1],['أي العضيات توجد في الخلية النباتية فقط؟',['الميتوكوندريا','البلاستيدات الخضراء','النواة','الريبوسومات'],1],['وظيفة جهاز جولجي:',['إنتاج الطاقة','تصنيع البروتين','التعبئة والتغليف','الهضم'],2],['الليسوسومات مسؤولة عن:',['التنفس','الهضم','الإخراج','التكاثر'],1],['السيتوبلازم هو:',['سائل داخل النواة','مادة هلامية داخل الخلية','غشاء الخلية','جدار الخلية'],1]]},
+{id:3,term:1,title:'الجهاز العصبي',icon:'🧠',
+ obj:['التعرف على مكونات الجهاز العصبي','فهم آلية نقل السيالات العصبية','معرفة وظائف أجزاء المخ المختلفة'],
+ content:`<h3>الجهاز العصبي: شبكة الاتصالات</h3><p>مسؤول عن التحكم في أنشطة الجسم وتنسيقها، ويتكون من الجهاز العصبي المركزي والطرفي.</p><h4>مكوناته</h4><ul><li><b>المخ:</b> التفكير والذاكرة</li><li><b>المخيخ:</b> التوازن</li><li><b>النخاع المستطيل:</b> الوظائف الحيوية</li><li><b>الحبل الشوكي:</b> نقل الإشارات</li></ul><h4>الخلية العصبية (نيورون)</h4><p>تتكون من جسم الخلية والزوائد الشجرية والمحور، وتنقل السيالات العصبية بسرعة فائقة.</p>`,
+ mcq:[['المسؤول عن التوازن في الجسم:',['المخ','المخيخ','النخاع','الحبل الشوكي'],1],['الخلية العصبية تسمى:',['نيوترون','نيورون','بروتون','إلكترون'],1],['أين يقع مركز التفكير؟',['المخيخ','المخ','النخاع المستطيل','الحبل الشوكي'],1]],
+ tf:[['المخيخ مسؤول عن التفكير',false],['الحبل الشوكي ينقل السيالات العصبية',true],['النخاع المستطيل يتحكم في التنفس',true]],
+ fill:[['_____ مسؤول عن التوازن وتنسيق الحركة','المخيخ'],['الخلية العصبية تسمى _____','نيورون'],['يتكون الجهاز العصبي المركزي من المخ و_____','الحبل الشوكي']],
+ test:[['أجزاء الخلية العصبية:',['نواة فقط','جسم ومحور وزوائد','غشاء فقط','سيتوبلازم فقط'],1],['السيالة العصبية هي:',['خلية','نبضة كهربائية','هرمون','إنزيم'],1],['الجهاز العصبي الطرفي يشمل:',['المخ','الأعصاب','الحبل الشوكي','المخيخ'],1],['المشبك العصبي هو:',['خلية عصبية','منطقة اتصال بين عصبونين','جزء من المخ','غدة'],1],['الفعل المنعكس يمر عبر:',['المخ','القوس الانعكاسي','القلب','الرئتين'],1]]},
+{id:4,term:1,title:'الجهاز الدوري',icon:'❤️',
+ obj:['فهم تركيب القلب ووظيفته','التعرف على أنواع الأوعية الدموية','معرفة مكونات الدم ووظائفها'],
+ content:`<h3>الجهاز الدوري: شبكة النقل</h3><p>ينقل الدم والمواد الغذائية والأكسجين إلى جميع خلايا الجسم.</p><h4>القلب</h4><p>عضو عضلي من أربع حجرات: أذينان وبطينان، وينبض حوالي 100,000 مرة يومياً.</p><h4>الأوعية الدموية</h4><ul><li><b>الشرايين:</b> تنقل الدم من القلب</li><li><b>الأوردة:</b> تعيد الدم إلى القلب</li><li><b>الشعيرات:</b> تبادل المواد مع الخلايا</li></ul><h4>مكونات الدم</h4><p>البلازما، كريات الدم الحمراء، كريات الدم البيضاء، والصفائح الدموية.</p>`,
+ mcq:[['كم عدد حجرات القلب؟',['2','3','4','5'],2],['وظيفة كريات الدم الحمراء:',['المناعة','نقل الأكسجين','التجلط','الهضم'],1],['الشرايين تنقل الدم:',['إلى القلب','من القلب','داخل القلب','حول القلب'],1]],
+ tf:[['القلب يتكون من ثلاث حجرات',false],['الأوردة تعيد الدم إلى القلب',true],['كريات الدم البيضاء تحارب الجراثيم',true]],
+ fill:[['يتكون القلب من _____ حجرات','أربع'],['_____ تنقل الدم من القلب إلى أجزاء الجسم','الشرايين'],['كريات الدم _____ مسؤولة عن نقل الأكسجين','الحمراء']],
+ test:[['أكبر شريان في الجسم:',['الأورطي','الرئوي','التاجي','السباتي'],0],['الصفائح الدموية مسؤولة عن:',['نقل الأكسجين','المناعة','تجلط الدم','الهضم'],2],['الدورة الدموية الصغرى بين:',['القلب والجسم','القلب والرئتين','القلب والمخ','القلب والكلى'],1],['البلازما تشكل من الدم نسبة:',['25%','45%','55%','75%'],2],['الهيموجلوبين موجود في:',['البلازما','كريات الدم الحمراء','كريات الدم البيضاء','الصفائح'],1]]},
+{id:5,term:2,title:'الجهاز التنفسي',icon:'🫁',
+ obj:['التعرف على أجزاء الجهاز التنفسي','فهم آلية التنفس','معرفة عملية تبادل الغازات'],
+ content:`<h3>الجهاز التنفسي: مصدر الأكسجين</h3><p>يُدخل الأكسجين ويُخرج ثاني أكسيد الكربون من الجسم.</p><h4>مكوناته</h4><ul><li><b>الأنف:</b> تنقية وترطيب الهواء</li><li><b>البلعوم والحنجرة:</b> ممر للهواء</li><li><b>القصبة الهوائية:</b> أنبوب الهواء الرئيسي</li><li><b>الرئتان:</b> موقع تبادل الغازات</li><li><b>الحويصلات الهوائية:</b> وحدات التبادل الغازي</li></ul><h4>آلية التنفس</h4><p>الشهيق: يتقلص الحجاب الحاجز فيدخل الهواء. الزفير: يرتخي الحجاب الحاجز فيخرج الهواء.</p>`,
+ mcq:[['أين يتم تبادل الغازات؟',['القصبة الهوائية','الشعب الهوائية','الحويصلات الهوائية','البلعوم'],2],['وظيفة الحجاب الحاجز:',['تنقية الهواء','المساعدة في التنفس','إنتاج الصوت','حماية الرئتين'],1],['الغاز الذي نستنشقه:',['ثاني أكسيد الكربون','النيتروجين','الأكسجين','الهيدروجين'],2]],
+ tf:[['الرئة اليمنى أكبر من اليسرى',true],['الحويصلات الهوائية هي موقع تبادل الغازات',true],['الزفير يحدث عند تقلص الحجاب الحاجز',false]],
+ fill:[['يتم تبادل الغازات في _____','الحويصلات الهوائية'],['يتقلص _____ أثناء الشهيق','الحجاب الحاجز'],['نستنشق غاز _____ ونخرج ثاني أكسيد الكربون','الأكسجين']],
+ test:[['عدد فصوص الرئة اليمنى:',['2','3','4','5'],1],['الغشاء المحيط بالرئتين:',['البلورا','الحجاب','الغشاء المخاطي','الجنب'],0],['معدل التنفس الطبيعي للبالغين (في الدقيقة):',['5-10','12-20','25-30','35-40'],1],['لسان المزمار يمنع دخول الطعام إلى:',['المريء','المعدة','القصبة الهوائية','الأنف'],2],['الهواء يدخل الرئتين بسبب:',['ضغط مرتفع داخلها','ضغط منخفض داخلها','درجة الحرارة','الجاذبية'],1]]},
+{id:6,term:2,title:'الجهاز الإخراجي',icon:'🫘',
+ obj:['فهم تركيب الجهاز الإخراجي','معرفة وظائف الكلى','التعرف على عملية تكوين البول'],
+ content:`<h3>الجهاز الإخراجي: تنقية الجسم</h3><p>يخلص الجسم من الفضلات والمواد الزائدة للحفاظ على توازن البيئة الداخلية.</p><h4>مكوناته</h4><ul><li><b>الكليتان:</b> ترشيح الدم وتكوين البول</li><li><b>الحالبان:</b> نقل البول إلى المثانة</li><li><b>المثانة:</b> تخزين البول</li><li><b>الإحليل:</b> إخراج البول</li></ul><h4>النفرون</h4><p>الوحدة الوظيفية للكلية، ويتكون من محفظة بومان والأنابيب الكلوية.</p>`,
+ mcq:[['الوحدة الوظيفية للكلية:',['الحالب','النفرون','المثانة','الإحليل'],1],['أين يخزن البول؟',['الكلية','الحالب','المثانة','الإحليل'],2],['عدد الكلى في جسم الإنسان:',['1','2','3','4'],1]],
+ tf:[['الكلية تقع في التجويف البطني',true],['النفرون يتكون من محفظة بومان فقط',false],['البول يتكون في الكلى',true]],
+ fill:[['الوحدة الوظيفية للكلية تسمى _____','النفرون'],['يتم تخزين البول في _____','المثانة'],['ينقل _____ البول من الكلية إلى المثانة','الحالب']],
+ test:[['عدد النفرونات في الكلية الواحدة تقريباً:',['ألف','عشرة آلاف','مئة ألف','مليون'],3],['محفظة بومان جزء من:',['الحالب','النفرون','المثانة','الإحليل'],1],['الكلية تنقي الدم من:',['الأكسجين','الجلوكوز','اليوريا','الهيموجلوبين'],2],['طول الحالب تقريباً:',['10 سم','25 سم','50 سم','75 سم'],1],['الغدة الكظرية توجد فوق:',['الكبد','الكلية','المعدة','البنكرياس'],1]]},
+{id:7,term:2,title:'الغدد الصماء',icon:'🧪',
+ obj:['التعرف على أنواع الغدد الصماء','فهم وظائف الهرمونات المختلفة','معرفة تأثير الهرمونات على الجسم'],
+ content:`<h3>الغدد الصماء: نظام التحكم الكيميائي</h3><p>تفرز هرمونات مباشرة في الدم لتنظيم وظائف الجسم.</p><h4>أهم الغدد</h4><ul><li><b>النخامية:</b> الغدة الرئيسية (سيدة الغدد)</li><li><b>الدرقية:</b> تنظيم الأيض</li><li><b>الكظرية:</b> الأدرينالين</li><li><b>البنكرياس:</b> الأنسولين والجلوكاجون</li><li><b>التناسلية:</b> الهرمونات الجنسية</li></ul><h4>الهرمونات</h4><p>مواد كيميائية تعمل كرسائل لتنسيق وظائف الجسم.</p>`,
+ mcq:[['الغدة الرئيسية في الجسم:',['الدرقية','النخامية','الكظرية','البنكرياس'],1],['الغدة التي تفرز الأنسولين:',['الدرقية','الكظرية','البنكرياس','النخامية'],2],['الأدرينالين يفرز من:',['الدرقية','الكظرية','النخامية','البنكرياس'],1]],
+ tf:[['الغدة النخامية تسمى سيدة الغدد',true],['الأنسولين يرفع مستوى السكر في الدم',false],['الغدد الصماء تفرز هرموناتها في الدم مباشرة',true]],
+ fill:[['الغدة _____ تسمى سيدة الغدد','النخامية'],['هرمون _____ يخفض مستوى السكر في الدم','الأنسولين'],['الغدة الكظرية تفرز هرمون _____','الأدرينالين']],
+ test:[['نقص هرمون الثيروكسين يسبب:',['السكري','القزامة','قصور الدرقية','ارتفاع الضغط'],2],['الغدة الصنوبرية تفرز:',['الأدرينالين','الميلاتونين','الأنسولين','الثيروكسين'],1],['زيادة هرمون النمو تسبب:',['القزامة','العملقة','السكري','السمنة'],1],['الجلوكاجون يعمل عكس:',['الثيروكسين','الأدرينالين','الأنسولين','الميلاتونين'],2],['الغدد الصماء تختلف عن القنوية بأنها:',['أكبر حجماً','تفرز في الدم مباشرة','تفرز إنزيمات','خارج الجسم'],1]]},
+{id:8,term:2,title:'الجهاز العضلي والهيكلي',icon:'🦴',
+ obj:['التعرف على أنواع العضلات','فهم تركيب الهيكل العظمي','معرفة وظائف الجهازين العضلي والهيكلي'],
+ content:`<h3>الجهاز العضلي والهيكلي</h3><p>يعمل الجهازان معاً لدعم الجسم وحمايته وتمكينه من الحركة.</p><h4>أنواع العضلات</h4><ul><li><b>الهيكلية:</b> إرادية، مسؤولة عن الحركة</li><li><b>الملساء:</b> لاإرادية، في الأعضاء الداخلية</li><li><b>القلبية:</b> لاإرادية، خاصة بالقلب</li></ul><h4>الهيكل العظمي</h4><p>يتكون من 206 عظمة، وينقسم إلى هيكل محوري وهيكل طرفي، ويحمي الأعضاء الحيوية ويدعم الجسم.</p>`,
+ mcq:[['عدد عظام جسم الإنسان البالغ:',['150','206','250','300'],1],['نوع عضلة القلب:',['هيكلية','ملساء','قلبية','إرادية'],2],['العضلات الهيكلية هي عضلات:',['لاإرادية','إرادية','قلبية','ملساء'],1]],
+ tf:[['يحتوي جسم الإنسان البالغ على 206 عظمة',true],['العضلات الملساء إرادية',false],['الهيكل العظمي يحمي الأعضاء الحيوية',true]],
+ fill:[['يحتوي جسم الإنسان البالغ على _____ عظمة','206'],['العضلات _____ هي عضلات إرادية','الهيكلية'],['عضلة القلب من العضلات _____','اللاإرادية']],
+ test:[['أطول عظمة في جسم الإنسان:',['عظمة الفخذ','عظمة الساق','العمود الفقري','عظمة العضد'],0],['المفاصل الزلالية تسمح بـ:',['حركة واسعة','عدم الحركة','حركة محدودة','لا شيء'],0],['الغضاريف توجد في:',['نهايات العظام','منتصف العظام','داخل العظام','خارج الجسم'],0],['نخاع العظام الأحمر ينتج:',['العصارة الصفراء','خلايا الدم','الهرمونات','الإنزيمات'],1],['عدد فقرات العمود الفقري:',['25','33','40','45'],1]]}
+];
+
+/* ============ الحالة والتخزين ============ */
+const KEY='bio_platform_students_v1';
+let students=[], me=null, page='welcome', lesson=null, term=1, quiz=null, timer=null, dark=true, sound=true, order=[], ac=null;
+
+function loadAll(){try{students=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){students=[]}}
+function saveAll(){try{localStorage.setItem(KEY,JSON.stringify(students))}catch(e){}}
+function sorted(){return [...students].sort((a,b)=>b.points-a.points)}
+function addPoints(n){if(!me)return;me.points+=n;saveAll()}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+/* ============ الصوت والمظهر ============ */
+function beep(t){
+  if(!sound)return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(),g=ac.createGain();
+    const f={click:520,ok:760,no:190,win:900}[t]||520;
+    o.frequency.value=f;o.type=t==='no'?'triangle':'sine';
+    g.gain.setValueAtTime(.001,ac.currentTime);g.gain.exponentialRampToValueAtTime(.06,ac.currentTime+.01);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.18);
+    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.2);
+  }catch(e){}
+}
+function toggleTheme(){dark=!dark;applyTheme();beep('click')}
+function applyTheme(){document.body.className=dark?'dark':'light';document.getElementById('bTheme').textContent=dark?'☀️':'🌙'}
+function toggleSound(){sound=!sound;document.getElementById('bSound').textContent=sound?'🔊':'🔇';sound?playMusic():pauseMusic();beep('click')}
+/* ============ الموسيقى ============ */
+let musicVol=0.25, mGain=null, toastT=null;
+function musicEl(){return document.getElementById('bgm')}
+let dataSrc=null, triedData=false;
+(function(){ // جرّب Blob أولاً (أضمن للتحكم في الصوت) وإلا ارجع للرابط المباشر
+  try{const m=musicEl();dataSrc=m.getAttribute('src');const bin=atob(dataSrc.split(',')[1]),u=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  m.src=URL.createObjectURL(new Blob([u],{type:'audio/mpeg'}));}catch(e){}
+})();
+let needGain=null;
+function detectGain(){ // بعض الأجهزة (آيفون) تتجاهل التحكم المباشر في الصوت
+  if(needGain!==null)return needGain;
+  try{const m=musicEl(),o=m.volume;m.volume=0.37;needGain=Math.abs(m.volume-0.37)>0.02;m.volume=o}catch(e){needGain=false}
+  return needGain;
+}
+function setupGain(){
+  if(mGain||!detectGain())return;
+  try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const src=ac.createMediaElementSource(musicEl());mGain=ac.createGain();src.connect(mGain);mGain.connect(ac.destination);}catch(e){mGain=null}
+}
+function applyVol(){const m=musicEl();if(mGain){mGain.gain.value=musicVol;m.volume=1}else{try{m.volume=musicVol}catch(e){}}}
+function playMusic(){
+  const m=musicEl();if(!m||!sound)return;
+  setupGain();try{if(ac&&ac.state==='suspended')ac.resume()}catch(e){}
+  applyVol();
+  const p=m.play();
+  if(p&&p.catch)p.catch(err=>{if(err&&err.name==='NotAllowedError')showToast('🎵 المس الشاشة لتشغيل الموسيقى');else showToast('⚠️ تعذّر تشغيل الأغنية')});
+}
+(function(){const m=musicEl();if(m)m.addEventListener('error',()=>{
+  if(!triedData&&dataSrc){triedData=true;m.src=dataSrc;m.load();playMusic();return}
+  showToast('⚠️ الأغنية لم تُحمَّل، افتح الملف من Chrome أو Safari')})})();
+function pauseMusic(){const m=musicEl();if(m)m.pause()}
+function showToast(t){const el=document.getElementById('toast');el.textContent=t;el.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>el.style.opacity=0,1100)}
+function changeVol(d){
+  musicVol=Math.min(1,Math.max(0,Math.round((musicVol+d)*10)/10));
+  if(!sound&&d>0){sound=true;document.getElementById('bSound').textContent='🔊'}
+  applyVol();playMusic();
+  showToast('🔊 مستوى الصوت: '+Math.round(musicVol*100)+'%');
+}
+['pointerdown','click','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,()=>{const m=musicEl();if(sound&&m&&m.paused&&!document.hidden)playMusic()},{passive:true}));
+document.addEventListener('visibilitychange',()=>{document.hidden?pauseMusic():playMusic()});
+
+/* ============ التنقل ============ */
+function go(p,o={}){
+  if(timer){clearInterval(timer);timer=null}
+  page=p;
+  if(o.term!==undefined)term=o.term;
+  if('lesson' in o)lesson=LESSONS.find(l=>l.id===o.lesson);
+  render();window.scrollTo(0,0);
+}
+function hdr(title,back){return `<div class="hdr"><button class="back" onclick="${back}">➡️ رجوع</button><h2>${title}</h2><div style="width:70px"></div></div>`}
+const colors=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444'];
+const tile=(ic,t,sub,col,fn)=>`<button class="tile" style="background:linear-gradient(135deg,${col},${col}bb)" onclick="beep('click');${fn}"><span class="ic">${ic}</span><div>${t}<small>${sub}</small></div></button>`;
+
+/* ============ الصفحات ============ */
+function render(){
+  const a=document.getElementById('app');
+  const fn={welcome,login,main,term:termPage,lesson:lessonPage,objectives,content,activities,games,orderGame,quiz:quizPage,qresult,results,leaderboard}[page]||welcome;
+  a.innerHTML=`<div class="wrap">${fn()}</div>`;
+  if(page==='quiz'&&quiz&&quiz.time)startTimer();
+}
+
+function welcome(){return `
+<div class="center" style="padding-top:30px">
+  <div class="logo float">🧬</div>
+  <h1 class="title">منصة الأحياء التفاعلية</h1>
+  <p style="font-size:20px">الصف الثاني الثانوي</p>
+  <p style="opacity:.7;margin:6px 0 20px">مرحباً بك في رحلة استكشاف جسم الإنسان</p>
+  <div class="card"><b>إعداد: مصطفى علاء محمود</b><br><small style="opacity:.8">إشراف: د/ نرمين محمد ابراهيم</small></div>
+  <button class="btn" onclick="go('login')">ابدأ الآن 🚀</button>
+</div>`}
+
+function login(){return `
+<div style="max-width:420px;margin:30px auto" class="center">
+  <div style="font-size:64px">👋</div>
+  <h2 style="margin:8px 0">مرحباً بك!</h2><p style="opacity:.8;margin-bottom:16px">ادخل اسمك للمتابعة</p>
+  <div class="card">
+    <input type="text" id="nm" placeholder="اسم الطالب" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn" onclick="doLogin()">متابعة ⬅️</button>
+    <button class="btn sec" onclick="go('welcome')">رجوع</button>
+  </div>
+</div>`}
+
+function doLogin(){
+  const el=document.getElementById('nm'),name=el.value.trim();
+  if(!name){el.style.outline='3px solid #ef4444';setTimeout(()=>el.style.outline='',900);return}
+  let s=students.find(x=>x.name===name);
+  if(!s){s={name,points:0,t1:0,t2:0,done:[]};students.push(s);saveAll()}
+  me=s;go('main');
+}
+
+function main(){
+  const top=sorted().slice(0,5);
+  return `
+<div class="hdr"><div><b style="font-size:19px">👤 ${esc(me.name)}</b><br><small>النقاط: <span class="pts">${me.points}</span> ⭐</small></div>
+<button class="back" style="color:#f87171" onclick="me=null;go('welcome')">خروج 🚪</button></div>
+<div class="card"><h3>🎯 الأهداف</h3>
+<p style="color:#60a5fa;font-weight:700;margin-top:8px">الهدف العام:</p><p>فهم جسم الإنسان ووظائفه المختلفة</p>
+<p style="color:#a78bfa;font-weight:700;margin-top:8px">الأهداف الإجرائية:</p>
+<ul style="padding-right:20px;opacity:.9"><li>التعرف على أجهزة الجسم المختلفة</li><li>تفسير العمليات الحيوية</li><li>تطبيق المعرفة في أنشطة وألعاب تفاعلية</li></ul></div>
+${tile('📘','الترم الأول','4 دروس','#3b82f6',"go('term',{term:1})")}
+${tile('📗','الترم الثاني','4 دروس','#8b5cf6',"go('term',{term:2})")}
+<div class="grid g2" style="margin-bottom:14px">
+ ${tile('📝','اختبار الترم 1','10 أسئلة','#0ea5e9',"startExam(1)")}
+ ${tile('📋','اختبار الترم 2','10 أسئلة','#d946ef',"startExam(2)")}
+ ${tile('📊','نتائجي','إحصائياتي','#10b981',"go('results')")}
+ ${tile('🏆','المتصدرين','الترتيب','#f59e0b',"go('leaderboard')")}
+</div>
+<div class="card"><h3 style="margin-bottom:10px">🏆 أفضل الطلاب</h3>
+${top.map((s,i)=>`<div class="rank"><b>${i+1}</b><span style="flex:1">${esc(s.name)}</span><span class="pts">${s.points} ⭐</span></div>`).join('')}</div>`}
+
+function termPage(){
+  const ls=LESSONS.filter(l=>l.term===term);
+  return hdr('الترم '+(term===1?'الأول':'الثاني'),"go('main')")+
+  ls.map((l,i)=>tile(l.icon,l.title+(me.done.includes(l.id)?' ✅':''),l.obj.length+' أهداف',colors[i%2],`go('lesson',{lesson:${l.id}})`)).join('')+
+  `<button class="btn" onclick="startExam(${term})">📝 اختبار الترم النهائي</button>`}
+
+function lessonPage(){return hdr(lesson.icon+' '+lesson.title,`go('term',{term:${lesson.term}})`)+
+ tile('🎯','أهداف الدرس',lesson.obj.length+' أهداف','#3b82f6',"go('objectives')")+
+ tile('📖','شرح الدرس','محتوى تفاعلي','#8b5cf6',"go('content')")+
+ tile('✏️','الأنشطة','3 أنواع','#10b981',"go('activities')")+
+ tile('🎮','الألعاب','4 ألعاب','#f59e0b',"go('games')")+
+ tile('📝','اختبار الدرس','5 أسئلة','#ef4444',"startTest()")+
+ `<button class="btn red" onclick="go('main')">الصفحة الرئيسية 🏠</button>`}
+
+function objectives(){return hdr('🎯 أهداف الدرس',"go('lesson')")+lesson.obj.map((o,i)=>`<div class="card" style="display:flex;gap:14px;align-items:center;animation:pop .5s ${i*.1}s both"><b style="width:40px;height:40px;border-radius:50%;background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</b><span style="font-size:18px">${o}</span></div>`).join('')}
+
+function content(){return hdr('📖 '+lesson.title,"go('lesson')")+`<div class="card content">${lesson.content}</div>`}
+
+function activities(){return hdr('✏️ الأنشطة',"go('lesson')")+
+ tile('📋','اختيار من متعدد','3 أسئلة','#3b82f6',"startActivity('mcq')")+
+ tile('✓✗','صح أو خطأ','3 أسئلة','#10b981',"startActivity('tf')")+
+ tile('📝','أكمل الفراغات','3 أسئلة','#8b5cf6',"startActivity('fill')")}
+
+function games(){return hdr('🎮 الألعاب',"go('lesson')")+
+ tile('🎯','تحدي الأسئلة','اختيار من متعدد','#ef4444',"startGame('challenge')")+
+ tile('⚡','من الأسرع','6 أسئلة / 40 ثانية','#f59e0b',"startGame('speed')")+
+ tile('🔢','رتب الخطوات','رتب الأهداف','#10b981',"startOrder()")+
+ tile('⏱️','صح/خطأ سريع','8 أسئلة / 40 ثانية','#8b5cf6',"startGame('quickTF')")}
+
+/* ============ محرك الأسئلة ============ */
+function toQ(type,arr){
+  if(type==='mcq')return arr.map(x=>({q:x[0],opts:x[1],ans:x[2]}));
+  if(type==='tf')return arr.map(x=>({q:x[0],ans:x[1]}));
+  return arr.map(x=>({q:x[0],ans:x[1]}));
+}
+function startQuiz(cfg){quiz={i:0,score:0,correct:0,locked:false,fb:null,time:0,...cfg};go('quiz')}
+function startActivity(t){startQuiz({type:t==='fill'?'fill':t,qs:toQ(t,lesson[t]),pts:10,title:'نشاط',back:"go('activities')",kind:'activity'})}
+function tfFromTest(l){ // أسئلة صح/خطأ إضافية مشتقة من أسئلة الدرس
+  return l.test.map(x=>{const right=Math.random()<.5;let o=x[2];
+    if(!right){const w=x[1].map((_,i)=>i).filter(i=>i!==x[2]);o=w[Math.floor(Math.random()*w.length)]}
+    return [x[0].replace(/[:؟?]\s*$/,'')+' ← '+x[1][o],right]});
+}
+function startGame(t){
+  if(t==='challenge')return startQuiz({type:'mcq',qs:shuffle(toQ('mcq',lesson.mcq)),pts:10,title:'تحدي الأسئلة',back:"go('games')",kind:'game'});
+  if(t==='speed')return startQuiz({type:'mcq',qs:shuffle(toQ('mcq',[...lesson.mcq,...lesson.test])).slice(0,6),pts:15,title:'من الأسرع',back:"go('games')",kind:'game',time:40});
+  startQuiz({type:'tf',qs:shuffle(toQ('tf',[...lesson.tf,...tfFromTest(lesson)])).slice(0,8),pts:10,title:'صح/خطأ سريع',back:"go('games')",kind:'game',time:40});
+}
+function startTest(){startQuiz({type:'mcq',qs:toQ('mcq',lesson.test),pts:20,title:'اختبار '+lesson.title,back:"go('lesson')",kind:'test'})}
+function startExam(t){
+  term=t;
+  const all=[];LESSONS.filter(l=>l.term===t).forEach(l=>l.test.forEach(x=>all.push({q:x[0],opts:x[1],ans:x[2],tag:l.title})));
+  startQuiz({type:'mcq',qs:shuffle(all).slice(0,10),pts:10,title:'اختبار الترم '+(t===1?'الأول':'الثاني'),back:"go('main')",kind:'exam'});
+}
+
+function startTimer(){
+  if(timer)return;
+  timer=setInterval(()=>{
+    if(!quiz)return;
+    quiz.time--;
+    const el=document.getElementById('tm');
+    if(el){el.textContent=Math.max(quiz.time,0);if(quiz.time<=5)el.parentElement.classList.add('low')}
+    if(quiz.time<=0){clearInterval(timer);timer=null;finishQuiz()}
+  },1000);
+}
+
+function quizPage(){
+  const q=quiz.qs[quiz.i], fb=quiz.fb;
+  let body='';
+  if(quiz.type==='mcq'){
+    body=q.opts.map((o,i)=>{
+      let c='';if(fb){if(i===q.ans)c='ok';else if(i===fb.v)c='no'}
+      return `<button class="opt ${c}" onclick="answer(${i})"><b style="margin-left:10px;opacity:.7">${'أبجد'[i]}</b>${o}</button>`}).join('');
+  }else if(quiz.type==='tf'){
+    const st=v=>fb?(v===q.ans?'ok':(v===fb.v?'no':'')):'';
+    body=`<div class="grid g2"><button class="opt ${st(true)} center" style="font-size:24px" onclick="answer(true)">✓ صح</button><button class="opt ${st(false)} center" style="font-size:24px" onclick="answer(false)">✗ خطأ</button></div>`;
+  }else{
+    body=`<input type="text" id="fa" placeholder="اكتب الإجابة هنا" ${fb?'disabled':''} onkeydown="if(event.key==='Enter')answer(document.getElementById('fa').value)"><button class="btn" onclick="answer(document.getElementById('fa').value)">تأكيد الإجابة</button>${fb?`<p class="center" style="font-weight:700;color:${fb.ok?'#4ade80':'#f87171'}">${fb.ok?'إجابة صحيحة ✓':'الإجابة الصحيحة: '+esc(q.ans)}</p>`:''}`;
+  }
+  const mid=quiz.time?`<div class="timer ${quiz.time<=5?'low':''}"><span id="tm">${quiz.time}</span></div>`:`<div><b>سؤال ${quiz.i+1}</b> <span style="opacity:.6">/ ${quiz.qs.length}</span></div>`;
+  return `<div class="hdr"><button class="back" onclick="finishQuiz(true)">⏹️ إنهاء</button>${mid}<b class="pts" style="font-size:20px">${quiz.score} ⭐</b></div>
+  ${quiz.time?'':`<div class="bar"><i style="width:${quiz.i/quiz.qs.length*100}%"></i></div>`}
+  ${q.tag?`<p class="center" style="margin-bottom:8px"><span class="chip">من درس: ${q.tag}</span></p>`:''}
+  <div class="card"><p style="font-size:21px;font-weight:700;text-align:center;margin-bottom:18px">${esc(q.q)}</p>${body}</div>`;
+}
+
+const norm=s=>String(s).trim().replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي')
+  .replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s+/g,' ').replace(/^ال/,'').toLowerCase();
+
+function answer(v){
+  if(!quiz||quiz.locked)return;
+  const q=quiz.qs[quiz.i];
+  if(quiz.type==='fill'&&!String(v).trim())return;
+  const ok=quiz.type==='fill'?norm(v)===norm(q.ans):v===q.ans;
+  quiz.locked=true;quiz.fb={v,ok};
+  if(ok){quiz.score+=quiz.pts;quiz.correct++;addPoints(quiz.pts);beep('ok')}else beep('no');
+  render();
+  setTimeout(()=>{
+    if(!quiz||page!=='quiz')return;
+    quiz.fb=null;quiz.locked=false;quiz.i++;
+    if(quiz.i>=quiz.qs.length){
+      if(quiz.loop&&quiz.time>0){quiz.qs=shuffle(quiz.qs);quiz.i=0}else return finishQuiz();
+    }
+    if(page==='quiz')render();
+  },quiz.type==='fill'&&!ok?1400:650);
+}
+
+function finishQuiz(manual){
+  if(timer){clearInterval(timer);timer=null}
+  if(!quiz)return;
+  const answered=quiz.loop?quiz.i+(quiz.fb?1:0):quiz.qs.length;
+  quiz.total=quiz.loop?Math.max(quiz.i,quiz.correct):quiz.qs.length;
+  const pct=quiz.qs.length&&!quiz.loop?Math.round(quiz.correct/quiz.qs.length*100):0;
+  quiz.pct=pct;
+  if(!manual||quiz.i>=quiz.qs.length){
+    if(quiz.kind==='test'&&lesson&&!me.done.includes(lesson.id)){me.done.push(lesson.id)}
+    if(quiz.kind==='exam'){const k=term===1?'t1':'t2';me[k]=Math.max(me[k]||0,pct)}
+    saveAll();
+  }
+  beep('win');page='qresult';render();
+}
+
+function qresult(){
+  const p=quiz.pct,loop=quiz.loop;
+  const emoji=loop?(quiz.score>=40?'🏆':quiz.score>=20?'🎮':'🎯'):(p>=80?'🏆':p>=50?'🌟':'💪');
+  const msg=loop?(quiz.score>=40?'أداء رائع! 🌟':quiz.score>=20?'أحسنت! واصل التقدم 💪':'حاول مرة أخرى! 🎯'):(p>=80?'ممتاز! أداء رائع 🎉':p>=50?'جيد! واصل التقدم 💪':'حاول مرة أخرى 📚');
+  return `<div class="center" style="padding-top:30px"><div class="big">${emoji}</div><h2 style="margin:10px 0">انتهى: ${esc(quiz.title)}</h2>
+  <div class="card">${loop?'':`<p style="font-size:54px;font-weight:900" class="pts">${p}%</p><p>${quiz.correct} من ${quiz.qs.length} إجابة صحيحة</p>`}
+  <p style="font-size:26px;margin-top:10px">+${quiz.score} ⭐</p><p style="margin-top:8px;opacity:.85">${msg}</p></div>
+  <button class="btn" onclick="${quiz.back}">متابعة</button>
+  <button class="btn sec" onclick="go('main')">الصفحة الرئيسية</button></div>`;
+}
+
+/* ============ لعبة الترتيب ============ */
+function startOrder(){
+  order=shuffle(lesson.obj.map((t,i)=>({id:i,t})));
+  if(order.every((o,i)=>o.id===i))order.reverse();
+  go('orderGame');
+}
+function orderGame(){return hdr('🔢 رتب الخطوات',"go('games')")+
+ `<p class="center" style="margin-bottom:12px;opacity:.85">رتّب أهداف الدرس كما وردت في صفحة «أهداف الدرس» باستخدام الأسهم</p>`+
+ order.map((o,i)=>`<div class="ord"><b style="width:32px;height:32px;border-radius:50%;background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center">${i+1}</b><span>${o.t}</span><button onclick="mv(${i},-1)">▲</button><button onclick="mv(${i},1)">▼</button></div>`).join('')+
+ `<button class="btn" onclick="checkOrder()">تحقق من الترتيب</button>`}
+function mv(i,d){const j=i+d;if(j<0||j>=order.length)return;[order[i],order[j]]=[order[j],order[i]];beep('click');render()}
+function checkOrder(){
+  const ok=order.every((o,i)=>o.id===i);
+  if(ok)addPoints(50);
+  quiz={title:'رتب الخطوات',score:ok?50:0,correct:ok?1:0,qs:[1],loop:true,pct:0,back:"go('games')",kind:'game',i:0,fb:null};
+  ok?beep('win'):beep('no');page='qresult';render();
+}
+
+/* ============ النتائج والمتصدرين ============ */
+function results(){
+  const rank=sorted().findIndex(s=>s.name===me.name)+1;
+  return hdr('📊 نتائجي',"go('main')")+`
+  <div class="card center" style="background:linear-gradient(135deg,#3b82f6cc,#8b5cf699)"><div style="font-size:56px">🎓</div><h3>${esc(me.name)}</h3><p style="font-size:38px;font-weight:900">${me.points} ⭐</p><p>المرتبة: ${rank||'-'}</p></div>
+  <div class="grid g2"><div class="card center"><p style="font-size:30px;font-weight:900;color:#60a5fa">${me.t1||0}%</p><small>الترم الأول</small></div><div class="card center"><p style="font-size:30px;font-weight:900;color:#a78bfa">${me.t2||0}%</p><small>الترم الثاني</small></div></div>
+  <div class="card"><b>الدروس المكتملة (${me.done.length}/8)</b><div style="margin-top:10px">${LESSONS.map(l=>`<span class="chip ${me.done.includes(l.id)?'done':''}">${l.icon} ${l.title} ${me.done.includes(l.id)?'✓':''}</span>`).join('')}</div></div>
+  <div class="card center">${me.points>=500?'🌟 أنت نجم! استمر في التألق!':me.points>=200?'💪 أداء رائع! واصل التقدم!':'🎯 بداية جيدة! كل يوم فرصة جديدة!'}</div>
+  <button class="btn red" onclick="me=null;go('welcome')">خروج 🚪</button>`}
+
+function leaderboard(){
+  const top=sorted().slice(0,10),med=['🥇','🥈','🥉'];
+  return hdr('🏆 المتصدرين',"go('main')")+
+  (top.length?top.map((s,i)=>`<div class="rank ${me&&s.name===me.name?'me':''}"><b>${i<3?med[i]:i+1}</b><span style="flex:1;font-weight:700">${esc(s.name)}</span><span class="pts">${s.points} ⭐</span></div>`).join(''):'<p class="center" style="padding:40px;opacity:.6">لا يوجد طلاب بعد</p>')+
+  `<p class="center" style="opacity:.6;font-size:13px;margin-top:10px">الترتيب محفوظ على هذا الجهاز/المتصفح فقط</p>`}
+
+/* ============ تشغيل ============ */
+loadAll();applyTheme();render();
+</script>
+</body>
+</html>
